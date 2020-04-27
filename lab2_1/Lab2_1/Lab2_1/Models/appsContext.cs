@@ -12,27 +12,11 @@ namespace Lab2_1.Models
             : base(options)
         {
         }
-       
+
         public DbSet<appsItem> appsItems { get; set; }
         public DbSet<Users> Users { get; set; }
 
-
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<UsersApps>()
-                .HasKey(t => new { t.UserId, t.AppId });
-
-            modelBuilder.Entity<UsersApps>()
-                .HasOne(sc => sc.User)
-                .WithMany(s => s.apps)
-                .HasForeignKey(sc => sc.UserId);
-
-            modelBuilder.Entity<UsersApps>()
-                .HasOne(sc => sc.App)
-                .WithMany(c => c.users)
-                .HasForeignKey(sc => sc.AppId);
-        }
+        
 
         public IEnumerable<Users> getUserPaid(IEnumerable<Users> users)
         {
@@ -50,58 +34,44 @@ namespace Lab2_1.Models
                 select a;
         }
 
-        public void SetAppsIdForUser( long appid, long userid)
+        public void SetAppsIdForUser(IEnumerable<Users> user, int appid, long userid)
         {
-
-            foreach (var u in Users)
+            foreach(var u in user)
             {
-                if (u.Id == userid)
+                if (u.appsId == null)
                 {
-                    u.apps.Add(new UsersApps { AppId = appid, UserId = u.Id });
+                    u.appsId = new long[1];
+                    u.appsId[0] = appid;
                 }
-
+                else
+                {
+                    long[] buf = u.appsId;
+                    Array.Resize(ref buf, buf.Length + 1);
+                    buf[buf.Length - 1] = appid;
+                    u.appsId = buf;
+                }
             }
-
             SaveChanges();
-
-            var apps = appsItems.Include(c => c.users).ThenInclude(sc => sc.User).ToList();
-            //foreach (var u in Users)
-            //{
-            //    if (u.Id == userid)
-            //    {
-
-            //    }
-
-            //}
-
-            //foreach (var a in appsItems)
-            //{
-            //    if (a.Id == appid)
-            //    {
-
-            //    }
-            //}
-
-
         }
 
-        public Dictionary<string, List<string>> GetAppsOfUsers()
+        public Dictionary<string, List<string>> GetAppsOfUsers(IEnumerable<Users> user, IEnumerable<appsItem> apps)
         {
             Dictionary<string, List<string>> buf = new Dictionary<string, List<string>>();
-
             
-
-            foreach (var c in Users)
-            {
-                List<string> app_names = new List<string>();
-                Console.WriteLine($"\n Course: {c.Name}");
-                // выводим всех студентов для данного кура
-                var app = c.apps.Select(sc => sc.App).ToList();
-                foreach (appsItem a in app)
-                    app_names.Add(a.Name);
-
-                buf.Add(c.Name, app_names);
-            }
+            foreach (var u in user) {
+                
+                List<string> bufList = new List<string>();
+                var result =
+                    from i in u.appsId
+                    join a in apps
+                    on i equals a.Id
+                    select new {a.Name};
+                foreach(var item in result)
+                {
+                    bufList.Add(item.Name);
+                }
+                buf.Add(u.Name, bufList);
+             }
 
             return buf;
 
