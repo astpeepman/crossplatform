@@ -11,7 +11,13 @@ namespace Lab2_1.Models
         public string Name { get; set; }
         public bool Free { get; set; }
         public string Autor {get; set;}
-        public bool secret { get; set; } 
+        public bool secret { get; set; }
 
+        public List<UsersApps> users { get; set; }
+
+        public appsItem()
+        {
+            users = new List<UsersApps>();
+        }
     }
 }

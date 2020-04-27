@@ -8,14 +8,16 @@ namespace Lab2_1.Models
 {
     public class Users
     {
-        
         public long Id { get; set; }
         public string Name { get; set; }
         public bool paid { get; set; }
         public string Phone { get; set; }
+        public List<UsersApps> apps { get; set; }
 
-        [NotMapped]
-        public long[] appsId { get; set; }
+        public Users()
+        {
+            apps = new List<UsersApps>();
+        }
 
         public void SetPhone()
         {

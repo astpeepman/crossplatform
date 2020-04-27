@@ -54,7 +54,7 @@ namespace Lab2_1.Controllers
         [HttpGet("test")]
         public Dictionary<string, List<string>> getAppsOfUs()
         {
-            return _context.GetAppsOfUsers(_context.Users, _context.appsItems);
+            return _context.GetAppsOfUsers();
         }
         
 
@@ -133,19 +133,19 @@ namespace Lab2_1.Controllers
         //}
 
         [HttpPatch("addApp/{userid}/{appId}")]
-        public async Task<ActionResult<Users>> AddAppForUser(int appId, long userid)
+        public string AddAppForUser(long appId, long userid)
         {
          
-            var users = await _context.Users.FindAsync(userid);
+            var users = _context.Users.FindAsync(userid);
             if (users == null)
             {
-                return NotFound();
+                return "Not Found";
             }
 
-            _context.SetAppsIdForUser(_context.Users, appId, userid);
-            await _context.SaveChangesAsync();
+            _context.SetAppsIdForUser(appId, userid);
+            _context.SaveChanges();
 
-            return users;
+            return "Okey";
 
         }
 
