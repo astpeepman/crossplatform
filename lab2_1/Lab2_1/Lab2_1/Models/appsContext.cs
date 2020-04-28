@@ -49,21 +49,43 @@ namespace Lab2_1.Models
                 where a.secret == false
                 select a;
         }
+        //public bool CheckUser(Users u, long a)
+        //{
+        //    Users.Include(c => c.apps).ThenInclude(sc => sc.App).ToList();
+        //    for (int i=0; i<u.apps.Count(); i++)
+        //    {
+        //        if (u.apps[i].AppId == a)
+        //        {
+        //            return false;
+        //        }
+        //    }
+        //    return true;
+        //}
 
-        public void SetAppsIdForUser( long appid, long userid)
+        public string SetAppsIdForUser( long appid, long userid)
         {
-
+            
             foreach (var u in Users)
             {
+                
                 if (u.Id == userid)
                 {
-                    u.apps.Add(new UsersApps { AppId = appid, UserId = u.Id });
+                    try
+                    {
+                        u.apps.Add(new UsersApps { AppId = appid, UserId = u.Id });
+                        SaveChanges();
+                        return "Okey";
+                    }
+                    catch
+                    {
+                        return "Error. Item not inserted";
+                    }
+                    
                 }
-
+                
             }
 
-            SaveChanges();
-
+            return "Error. Not Found this UserId";
         }
 
         public Dictionary<string, List<string>> GetAppsOfUsers()

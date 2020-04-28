@@ -135,18 +135,7 @@ namespace Lab2_1.Controllers
         [HttpPost("addApp/{userid}/{appId}")]
         public string AddAppForUser(long appId, long userid)
         {
-         
-            var users = _context.Users.FindAsync(userid);
-            if (users == null)
-            {
-                return "Not Found";
-            }
-
-            _context.SetAppsIdForUser(appId, userid);
-            _context.SaveChanges();
-
-            return "Okey";
-
+            return _context.SetAppsIdForUser(appId, userid); ;
         }
 
         // DELETE: api/Users/5
