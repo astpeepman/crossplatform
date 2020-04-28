@@ -86,6 +86,11 @@ namespace Lab2_1.Controllers
         }
 
 
+        [HttpGet("UsersOfApps")]
+        public Dictionary<string, List<string>> getAppsOfUs()
+        {
+            return _context.GetUsersOfApp();
+        }
 
         // POST: api/appsItems
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for

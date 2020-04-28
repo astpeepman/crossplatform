@@ -64,43 +64,42 @@ namespace Lab2_1.Models
 
             SaveChanges();
 
-            var apps = appsItems.Include(c => c.users).ThenInclude(sc => sc.User).ToList();
-            //foreach (var u in Users)
-            //{
-            //    if (u.Id == userid)
-            //    {
-
-            //    }
-
-            //}
-
-            //foreach (var a in appsItems)
-            //{
-            //    if (a.Id == appid)
-            //    {
-
-            //    }
-            //}
-
-
         }
 
         public Dictionary<string, List<string>> GetAppsOfUsers()
         {
-            Dictionary<string, List<string>> buf = new Dictionary<string, List<string>>();
+            Users.Include(c => c.apps).ThenInclude(sc => sc.App).ToList();
 
-            
+            Dictionary<string, List<string>> buf = new Dictionary<string, List<string>>();
 
             foreach (var c in Users)
             {
                 List<string> app_names = new List<string>();
-                Console.WriteLine($"\n Course: {c.Name}");
-                // выводим всех студентов для данного кура
                 var app = c.apps.Select(sc => sc.App).ToList();
                 foreach (appsItem a in app)
                     app_names.Add(a.Name);
 
                 buf.Add(c.Name, app_names);
+            }
+
+            return buf;
+
+        }
+
+        public Dictionary<string, List<string>> GetUsersOfApp()
+        {
+            appsItems.Include(c => c.users).ThenInclude(sc => sc.User).ToList();
+
+            Dictionary<string, List<string>> buf = new Dictionary<string, List<string>>();
+
+            foreach (var a in appsItems)
+            {
+                List<string> users_names = new List<string>();
+                var us = a.users.Select(sc => sc.User).ToList();
+                foreach (Users u in us)
+                    users_names.Add(u.Name);
+
+                buf.Add(a.Name, users_names);
             }
 
             return buf;

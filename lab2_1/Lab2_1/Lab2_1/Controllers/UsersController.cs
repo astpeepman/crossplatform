@@ -51,7 +51,7 @@ namespace Lab2_1.Controllers
 
         }
 
-        [HttpGet("test")]
+        [HttpGet("AppsOfUsers")]
         public Dictionary<string, List<string>> getAppsOfUs()
         {
             return _context.GetAppsOfUsers();
@@ -132,7 +132,7 @@ namespace Lab2_1.Controllers
         //    }
         //}
 
-        [HttpPatch("addApp/{userid}/{appId}")]
+        [HttpPost("addApp/{userid}/{appId}")]
         public string AddAppForUser(long appId, long userid)
         {
          
