@@ -9,11 +9,10 @@ namespace Lab2_1.Models
 {
     public class AuthOptions
     {
-        public static string Issuer => "Apps";
+        public static string Issuer => "TM";
         public static string Audience => "APIclients";
         public static int LifetimeInYears => 1;
-        public static SecurityKey SigningKey => new SymmetricSecurityKey(Encoding.ASCII.GetBytes("superSecretKeyCanBeShortBTW"));
-
+        public static SecurityKey SigningKey => new SymmetricSecurityKey(Encoding.ASCII.GetBytes("superSecretKeyMustBeLoooooong"));
         internal static string GenerateToken(bool is_admin = false)
         {
             var now = DateTime.UtcNow;

@@ -25,10 +25,10 @@ namespace Lab2_1.Controllers
 
         // GET: api/appsItems
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public IEnumerable<appsItem> GetappsItems()
         {
-            return _context.getapps();
+            return _context.getapps(_context.appsItems);
         }
 
         //GET: api/appsItems/secret
@@ -42,8 +42,7 @@ namespace Lab2_1.Controllers
         // GET: api/appsItems/5
         [HttpGet("{id}")]
         public async Task<ActionResult<appsItem>> GetappsItem(long id)
-        {   
-
+        {
             var appsItem = await _context.appsItems.FindAsync(id);
 
             if (appsItem == null)
@@ -52,12 +51,6 @@ namespace Lab2_1.Controllers
             }
 
             return appsItem;
-        }
-
-        [HttpGet("UsersFromApps/{appid}")]
-        public IEnumerable<string> GetAppsOfUser(long appid)
-        {
-            return _context.getUsersOfOneApp(appid);
         }
 
         // PUT: api/appsItems/5
@@ -103,15 +96,14 @@ namespace Lab2_1.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-
-        public IEnumerable<appsItem> PostappsItem(appsItem appsItem)
+       
+        public async Task<ActionResult<appsItem>> PostappsItem(appsItem appsItem)
         {
             appsItem.secret = false;
             _context.appsItems.Add(appsItem);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return _context.appsItems;
-            //return CreatedAtAction("GetappsItem", new { id = appsItem.Id }, appsItem);
+            return CreatedAtAction("GetappsItem", new { id = appsItem.Id }, appsItem);
         }
 
         [HttpPost("secret")]

@@ -42,10 +42,10 @@ namespace Lab2_1.Models
                 select user;
         }
 
-        public IEnumerable<appsItem> getapps()
+        public IEnumerable<appsItem> getapps(IEnumerable<appsItem> apps)
         {
             return
-                from a in appsItems
+                from a in apps
                 where a.secret == false
                 select a;
         }
@@ -64,25 +64,12 @@ namespace Lab2_1.Models
 
         public string SetAppsIdForUser( long appid, long userid)
         {
-            bool flag = false;
-            foreach (var a in appsItems)
-            {
-                if (a.Id == appid)
-                {
-                    flag = true;
-                }
-            }
-
-            if (!flag)
-            {
-                return "Error. Not found this id";
-            }
-
+            
             foreach (var u in Users)
             {
                 
                 if (u.Id == userid)
-                {   
+                {
                     try
                     {
                         u.apps.Add(new UsersApps { AppId = appid, UserId = u.Id });
@@ -101,45 +88,6 @@ namespace Lab2_1.Models
             return "Error. Not Found this UserId";
         }
 
-        public IEnumerable<string> getUsersOfOneApp(long appid)
-        {
-            Users.Include(c => c.apps).ThenInclude(sc => sc.App).ToList();
-            List<string> User_names = new List<string>();
-
-            foreach (var a in appsItems)
-            {
-                if (a.Id == appid)
-                {
-                    var user = a.users.Select(sc => sc.User).ToList();
-                    foreach (Users u in user)
-                        User_names.Add(u.Name);
-                    break;
-                }
-            }
-            return User_names;
-
-        }
-
-        public IEnumerable<string> getAppsOfOneUser(long userid)
-        {
-            Users.Include(c => c.apps).ThenInclude(sc => sc.App).ToList();
-            List<string> app_names = new List<string>();
-
-            foreach (var u in Users)
-            {
-                if (u.Id == userid)
-                {
-                    var app = u.apps.Select(sc => sc.App).ToList();
-                    foreach (appsItem a in app)
-                        app_names.Add(a.Name);
-                    break;
-                }
-            }
-            return app_names;
-
-        }
-
-
         public Dictionary<string, List<string>> GetAppsOfUsers()
         {
             Users.Include(c => c.apps).ThenInclude(sc => sc.App).ToList();
@@ -155,7 +103,9 @@ namespace Lab2_1.Models
 
                 buf.Add(c.Name, app_names);
             }
+
             return buf;
+
         }
 
         public Dictionary<string, List<string>> GetUsersOfApp()

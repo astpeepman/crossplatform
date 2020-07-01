@@ -39,22 +39,9 @@ namespace Lab2_1.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Users>> GetUser(long id)
+        public IEnumerable<Users> GetUser()
         {
-            var User = await _context.Users.FindAsync(id);
-
-            if (User == null)
-            {
-                return NotFound();
-            }
-
-            return User;
-        }
-
-        [HttpGet("appsFromUser/{userid}")]
-        public IEnumerable<string> GetAppsOfUser(long userid)
-        {
-            return _context.getAppsOfOneUser(userid);
+            return _context.Users;
         }
 
         [HttpGet("paid")]
@@ -69,7 +56,7 @@ namespace Lab2_1.Controllers
         {
             return _context.GetAppsOfUsers();
         }
-
+        
 
 
 
@@ -109,36 +96,62 @@ namespace Lab2_1.Controllers
         // POST: api/Users
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-
+       
 
         [HttpPost]
-        //[Authorize]
-        public IEnumerable<Users> PostUsers(Users user)
+        [Authorize]
+        public async Task<ActionResult<Users>> PostUsers(Users user)
         {
             user.SetPhone();
             _context.Users.Add(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return _context.Users;
+            return CreatedAtAction("GetUsers", new { id = user.Id }, user);
         }
 
-       
+        //[HttpPatch]
+        //public IActionResult JsonPatchWithModelState(
+        //[FromBody] JsonPatchDocument<Users> patchDoc)
+        //{
+        //    if (patchDoc != null)
+        //    {
+        //        var customer = CreateCustomer();
 
-        [HttpPost("addApp")]
-        public string AddAppForUser(long[] atribs)
+        //        patchDoc.ApplyTo(customer, ModelState);
+
+        //        if (!ModelState.IsValid)
+        //        {
+        //            return BadRequest(ModelState);
+        //        }
+
+        //        return new ObjectResult(customer);
+        //    }
+        //    else
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+        //}
+
+        [HttpPost("addApp/{userid}/{appId}")]
+        public string AddAppForUser(long appId, long userid)
         {
-            return _context.SetAppsIdForUser(atribs[1], atribs[0]); ;
+            return _context.SetAppsIdForUser(appId, userid); ;
         }
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async void DeleteUsers(long id)
+        public async Task<ActionResult<Users>> DeleteUsers(long id)
         {
             var users = await _context.Users.FindAsync(id);
-            
+            if (users == null)
+            {
+                return NotFound();
+            }
+
             _context.Users.Remove(users);
             await _context.SaveChangesAsync();
 
+            return users;
         }
 
         private bool UsersExists(long id)
